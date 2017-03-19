@@ -21,7 +21,7 @@
         return logTime.timestamp();
       }
       
-      Timestamp logValues(ACF_Temperature, ACF_Temperature, Flags)  {
+      Timestamp logValues(ACF_Temperature, ACF_Temperature, T_Flags)  {
         #ifdef DEBUG_UT_STATE
           Serial.println(F("DEBUG_UT_STATE: logValues(...)"));
         #endif
