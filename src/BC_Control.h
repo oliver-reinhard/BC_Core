@@ -1,6 +1,7 @@
 #ifndef BC_CONTROL_H_INCLUDED
   #define BC_CONTROL_H_INCLUDED
-  
+
+  #include <ACF_Types.h>
   #include <BC_Config.h>
   #include <BC_Log.h>
 
@@ -99,15 +100,11 @@
       virtual void commandExecuted(boolean /* success */) { }
   };
 
-  typedef uint32_t TimeMills;
-  typedef int32_t TimeSeconds;
-  
-  #define UNDEFINED_TIME_SECONDS -1
   
   struct OperationalParams {
     
     /* Timepoint [ms] of most recent transition to current state.  */
-    TimeMills currentStateStartMillis = 0L;
+    TimeMillis currentStateStartMillis = 0L;
 
     /* Representation of the physical water-temperature sensor. */
     DS18B20_Sensor water = DS18B20_Sensor("Water");
@@ -122,10 +119,10 @@
     boolean heating = false;
     
     /*  Time [ms] of most recent transition to state HEATING.*/
-    TimeMills heatingStartMillis = 0L;
+    TimeMillis heatingStartMillis = 0L;
     
     /* Accumulated time in state HEATING, not including the period since last start (if heatingStartMillis != 0L). */
-    TimeMills heatingAccumulatedMillis = 0L;
+    TimeMillis heatingAccumulatedMillis = 0L;
 
     /* Time [s] to reach target temperature when heating first started. This value doesn't change during heating. */
     TimeSeconds originalTimeToGo = UNDEFINED_TIME_SECONDS;
@@ -140,7 +137,7 @@
   /*
    * Calculates the accumulated heating time.
    */
-  TimeMills heatingTotalMillis(OperationalParams *op);
+  TimeMillis heatingTotalMillis(OperationalParams *op);
   
 
   class ControlContext {

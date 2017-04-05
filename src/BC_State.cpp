@@ -28,9 +28,9 @@ const Event Events::findEvent(const T_Event_ID id) {
 
 // No user events available, but automatic events.
 
-EventSet Init::eval(const Event /* userRequest */) {
-  EventSet result = AbstractState::eval();
-  if (context->op->water.sensorStatus == DS18B20_SENSOR_INITIALISING) {
+EventSet Init::eval(const TimeMillis timeInState, const Event userRequest) {
+  EventSet result = AbstractState::eval(timeInState, userRequest);
+  if (context->op->water.sensorStatus == DS18B20_SENSOR_INITIALISING && timeInState < SENSOR_INIT_TIMEOUT_MS) {
     result |= Events::NONE;  // = wait
   } else if (context->op->water.sensorStatus == DS18B20_SENSOR_OK) {
     result |= Events::READY;
@@ -48,6 +48,7 @@ StateID Init::transAction(Event event) {
   }
   return AbstractState::transAction(event);
 }
+
 
 /*
  * SENSORS NOK
@@ -75,6 +76,7 @@ StateID SensorsNOK::transAction(Event event) {
   return AbstractState::transAction(event);
 }
 
+
 /*
  * READY
  */
@@ -94,6 +96,7 @@ StateID Ready::transAction(Event event) {
   }
   return AbstractState::transAction(event);
 }
+
 
 /*
  * IDLE
@@ -120,6 +123,7 @@ StateID Idle::transAction(Event event) {
   }
   return AbstractState::transAction(event);
 }
+
 
 /*
  * RECORDING
@@ -148,6 +152,7 @@ void Recording::exitAction(){
   context->op->originalTimeToGo = UNDEFINED_TIME_SECONDS;
 }
 
+
 /*
  * STANDBY
  */
@@ -165,6 +170,7 @@ StateID Standby::transAction(Event event) {
   return AbstractState::transAction(event);
 }
 
+
 /*
  * HEATING
  */
@@ -173,8 +179,8 @@ EventSet Heating::acceptedUserEvents() {
   return AbstractState::acceptedUserEvents() | Events::HEAT_OFF;
 }
 
-EventSet Heating::eval(const Event userRequest = EVENT_NONE) {
-  EventSet result = AbstractState::eval(userRequest); // handles user-requested events
+EventSet Heating::eval(const TimeMillis timeInState, const Event userRequest) {
+  EventSet result = AbstractState::eval(timeInState, userRequest); // handles user-requested events
   if (context->op->water.currentTemp >= context->config->heaterCutOutWaterTemp) {
     result |= Events::TEMP_OVER;
   }
@@ -209,8 +215,8 @@ EventSet Overheated::acceptedUserEvents() {
   return AbstractState::acceptedUserEvents() | Events::HEAT_RESET;
 }
 
-EventSet Overheated::eval(const Event /* userRequest */) {
-  EventSet result = AbstractState::eval();  // handles user-requested events
+EventSet Overheated::eval(const TimeMillis timeInState, const Event userRequest) {
+  EventSet result = AbstractState::eval(timeInState, userRequest);  // handles user-requested events
   if (context->op->water.currentTemp <= context->config->heaterBackOkWaterTemp) {
     result |= Events::TEMP_OK;
   }
@@ -244,8 +250,7 @@ void BoilerStateAutomaton::init(ExecutionContext *context) {
   READY.setContext(context);
   READY.setSubstates(READY_SUBSTATES, 2);
   
-  setStates(ALL_STATES, States::NUM_STATES);
-  currentState = &INIT;
+  setStates(ALL_STATES, States::NUM_STATES, &INIT);
 }
  
 UserCommands BoilerStateAutomaton::acceptedUserCommands() {
@@ -278,7 +283,6 @@ UserCommands BoilerStateAutomaton::eventsToCommands(EventSet events) {
 }
 
 void BoilerStateAutomaton::stateChanged(const StateID fromState, const Event event, const StateID toState) {
-    context->op->currentStateStartMillis = millis();
     context->log->logState(fromState, toState, event);
 }
 

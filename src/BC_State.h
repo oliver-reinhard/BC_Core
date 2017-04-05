@@ -106,8 +106,11 @@
     public:
       StateID id() { return States::INIT; }
       // No user commands for this state.
-      EventSet eval(const Event userRequest = EVENT_NONE);
-      
+      EventSet eval(const TimeMillis timeInState, const Event userRequest = EVENT_NONE);
+    
+      // On startup, wait at most this time before for sensors to initialise properery, then automatically transition to SensorsNOK.
+      static const TimeMillis SENSOR_INIT_TIMEOUT_MS = 10000L;
+    
     protected:
       StateID transAction(Event event);
   };
@@ -173,7 +176,7 @@
     public:
       StateID id() { return States::HEATING; }
       EventSet acceptedUserEvents();
-      EventSet eval(const Event userRequest);
+      EventSet eval(const TimeMillis timeInState, const Event userRequest = EVENT_NONE);
       
     protected:
       StateID transAction(Event event);
@@ -190,7 +193,7 @@
     public:
       StateID id() { return States::OVERHEATED; }
       EventSet acceptedUserEvents();
-      EventSet eval(const Event userRequest = EVENT_NONE);
+      EventSet eval(const TimeMillis timeInState, const Event userRequest = EVENT_NONE);
       
     protected:
       StateID transAction(Event event);

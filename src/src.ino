@@ -1,5 +1,5 @@
 //
-// Container project for editing only
+// Container project for viewing source file only. DOES NOT COMPILE.
 //
 
 void setup() {

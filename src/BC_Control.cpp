@@ -4,8 +4,8 @@
 
 #define WATER_HEAT_CAPACITY 4182.0 // J / (kg*K)
 
-TimeMills heatingTotalMillis(OperationalParams *op) {
-  TimeMills duration = op->heatingAccumulatedMillis;
+TimeMillis heatingTotalMillis(OperationalParams *op) {
+  TimeMillis duration = op->heatingAccumulatedMillis;
   if (op->heatingStartMillis != 0L) {
     duration += millis() - op->heatingStartMillis;
   }

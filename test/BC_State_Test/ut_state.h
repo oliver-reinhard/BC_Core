@@ -13,9 +13,12 @@
   class MockLog : public Log {
     public:
       MockLog(AbstractStore *store) : Log(store) {}
-      Timestamp logMessage(T_Message_ID, int16_t, int16_t) {    
+      Timestamp logMessage(T_Message_ID id, int16_t, int16_t) {
+        if (id == id) { } // prevent "unused parameter"
         #ifdef DEBUG_UT_STATE
-          Serial.println(F("DEBUG_UT_STATE: logMessage(...)"));
+          Serial.print(F("DEBUG_UT_STATE: logMessage("));
+          Serial.print(id);
+          Serial.println(')');
         #endif
         logMessageCount++;
         return logTime.timestamp();
@@ -29,9 +32,14 @@
         return logTime.timestamp();
       }
       
-      Timestamp logState(StateID, StateID, Event)  {
+      Timestamp logState(StateID from, StateID to, Event)  {
+        if (from == to) { } // prevent "unused parameter"
         #ifdef DEBUG_UT_STATE
-          Serial.println(F("DEBUG_UT_STATE: logState(...)"));
+          Serial.print(F("DEBUG_UT_STATE: logState("));
+          Serial.print(from.name());
+          Serial.print(F("->"));
+          Serial.print(to.name());
+          Serial.println(')');
         #endif
         logStateCount++;
         return logTime.timestamp();
@@ -73,7 +81,9 @@
   
       void heat(boolean on) {
         #ifdef DEBUG_UT_STATE
-          Serial.println(F("DEBUG_UT_STATE: heat (on/off)"));
+          Serial.print(F("DEBUG_UT_STATE: heat("));
+          Serial.print(on ? "on" : "off");
+          Serial.println(')');
         #endif
         context->op->heating = on;
         if (on) {
