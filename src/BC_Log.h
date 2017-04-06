@@ -11,12 +11,12 @@
   #include <ACF_State.h>
   #include <BC_Config.h>
   
-  typedef enum {
-    LOG_DATA_TYPE_MESSAGE = 0,
-    LOG_DATA_TYPE_VALUES = 1,
-    LOG_DATA_TYPE_STATE = 2,
-    LOG_DATA_TYPE_CONFIG = 3,
-  } LogDataTypeEnum;
+  enum class LogDataType : T_LogDataType_ID {
+    MESSAGE = 0,
+    VALUES = 1,
+    STATE = 2,
+    CONFIG = 3,
+  };
 
 
   /*
@@ -86,7 +86,7 @@
       /*
        * Log a config-param change.
        */
-      virtual Timestamp logConfigParam(T_ConfigParam_ID id, float newValue);     
+      virtual Timestamp logConfigParam(ConfigParam param, float newValue);
   };
 
 #endif

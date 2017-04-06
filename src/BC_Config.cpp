@@ -58,22 +58,22 @@ void ConfigParams::initParams(boolean &updated) {
 }
 
 
-ConfigParamTypeEnum ConfigParams::paramType(ConfigParamEnum param) {
+ConfigParamType ConfigParams::paramType(ConfigParam param) {
   switch(param) {
-    case PARAM_WATER_TEMP_SENSOR_ID: 
-    case PARAM_AMBIENT_TEMP_SENSOR_ID:
-      return PARAM_TYPE_TEMP_SENSOR_ID;
-    case PARAM_TARGET_TEMP:
-    case PARAM_HEATER_CUT_OUT_WATER_TEMP:
-    case PARAM_HEATER_BACK_OK_WATER_TEMP:
-    case PARAM_LOG_TEMP_DELTA:
-      return PARAM_TYPE_TEMPERATURE;
-    case PARAM_LOG_TIME_DELTA:
-    case PARAM_TANK_CAPACITY:
-    case PARAM_HEATER_POWER:
-      return PARAM_TYPE_FLOAT;
+    case ConfigParam::WATER_TEMP_SENSOR_ID: 
+    case ConfigParam::AMBIENT_TEMP_SENSOR_ID:
+      return ConfigParamType::TEMP_SENSOR_ID;
+    case ConfigParam::TARGET_TEMP:
+    case ConfigParam::HEATER_CUT_OUT_WATER_TEMP:
+    case ConfigParam::HEATER_BACK_OK_WATER_TEMP:
+    case ConfigParam::LOG_TEMP_DELTA:
+      return ConfigParamType::TEMPERATURE;
+    case ConfigParam::LOG_TIME_DELTA:
+    case ConfigParam::TANK_CAPACITY:
+    case ConfigParam::HEATER_POWER:
+      return ConfigParamType::FLOAT;
     default:
-      return PARAM_TYPE_UNDEFINED;
+      return ConfigParamType::UNDEFINED;
   }
 }
 

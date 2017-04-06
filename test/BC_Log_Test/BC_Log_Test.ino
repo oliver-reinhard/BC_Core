@@ -33,10 +33,10 @@ test(a_data_type_sizes) {
   Serial.print(F("LogConfigParamData: "));
   Serial.println(sizeof(LogConfigParamData));
   
-  assertEqual(sizeof(LogMessageData), sizeof(LogData));
-  assertEqual(sizeof(LogValuesData), sizeof(LogData));
-  assertEqual(sizeof(LogStateData), sizeof(LogData));
-  assertEqual(sizeof(LogConfigParamData), sizeof(LogData));
+  assertLessOrEqual(sizeof(LogMessageData), sizeof(LogData));
+  assertLessOrEqual(sizeof(LogValuesData), sizeof(LogData));
+  assertLessOrEqual(sizeof(LogStateData), sizeof(LogData));
+  assertLessOrEqual(sizeof(LogConfigParamData), sizeof(LogData));
 }
 
 test(b_logging) {

@@ -8,15 +8,15 @@
   #define HEATER_PIN    9
   #define ONE_WIRE_PIN  10 // Temperature sensors
 
-  typedef enum {
-    MSG_WATER_TEMP_SENSOR_SILENT = 20,      // Water-temperature sensor not responding. Check wiring and sensor, then restart.
-    MSG_WATER_TEMP_SENSOR_ID_UNDEF = 21,    // Sensor ID of water-temperature sensor could not be obtained. Check wiring and sensor, then restart.
-    MSG_WATER_TEMP_SENSOR_ID_AUTO =  22,    // Sensor ID of water-temperature sensor was assigned automatically. Confirm that it refers to the correct sensor, then restart.
-    MSG_AMBIENT_TEMP_SENSOR_SILENT = 23,    // Ambient-temperature sensor not responding. Check wiring and sensor, then restart.
-    MSG_AMBIENT_TEMP_SENSOR_ID_UNDEF = 24,  // Sensor ID of ambient-temperature sensor could not be obtained. Check wiring and sensor, then restart.
-    MSG_AMBIENT_TEMP_SENSOR_ID_AUTO =  25,  // Sensor ID of ambient-temperature sensor was assigned automatically. Confirm that it refers to the correct sensor, then restart.
-    MSG_TEMP_SENSOR_IDS_CLEARED =  26       // Sensor IDs of water- and ambient-temperature sensor cleared. Restart to see the effect.
-  } ControlMessageEnum;
+  enum class ControlMsg : T_Message_ID {
+    WATER_TEMP_SENSOR_SILENT = 20,      // Water-temperature sensor not responding. Check wiring and sensor, then restart.
+    WATER_TEMP_SENSOR_ID_UNDEF = 21,    // Sensor ID of water-temperature sensor could not be obtained. Check wiring and sensor, then restart.
+    WATER_TEMP_SENSOR_ID_AUTO =  22,    // Sensor ID of water-temperature sensor was assigned automatically. Confirm that it refers to the correct sensor, then restart.
+    AMBIENT_TEMP_SENSOR_SILENT = 23,    // Ambient-temperature sensor not responding. Check wiring and sensor, then restart.
+    AMBIENT_TEMP_SENSOR_ID_UNDEF = 24,  // Sensor ID of ambient-temperature sensor could not be obtained. Check wiring and sensor, then restart.
+    AMBIENT_TEMP_SENSOR_ID_AUTO =  25,  // Sensor ID of ambient-temperature sensor was assigned automatically. Confirm that it refers to the correct sensor, then restart.
+    TEMP_SENSOR_IDS_CLEARED =  26       // Sensor IDs of water- and ambient-temperature sensor cleared. Restart to see the effect.
+  };
 
 
   // Water min and max values used to check that sensor-temperature readout is plausible:
@@ -29,7 +29,9 @@
   
   #define CMD_ARG_BUF_SIZE 30   // Size of the read buffer for incoming data
   #define CMD_ARG_VALUE_SIZE 4  // Size of command argument values
-  
+
+  typedef uint16_t T_UserCommand_ID;
+
   typedef enum {
     CMD_NONE             = 0,       // 1
     CMD_INFO_HELP        = 0x1,     // 2
@@ -53,8 +55,7 @@
   /*
    * ID for enum type.
    */
-  typedef uint16_t UserCommandID;
-  const UserCommandID MAX_USER_COMMAND_ID = 2 << (NUM_USER_COMMANDS - 1);
+  const T_UserCommand_ID MAX_USER_COMMAND_ID = 2 << (NUM_USER_COMMANDS - 1);
 
   // Bitwise OR combination ("|") of UserCommandEnum(s):
   typedef uint16_t UserCommands;
@@ -64,31 +65,31 @@
    */
   struct UserRequest {
     UserCommandEnum command;
-    ConfigParamEnum param;
+    ConfigParam param;
     int32_t intValue;
     float floatValue;
     Event event = EVENT_NONE;  // event that corresponds to command
 
     void clear() {
       command = CMD_NONE;
-      param = PARAM_NONE;
+      param = ConfigParam::NONE;
       intValue = INT32_MIN;
       floatValue = -999999;
       event = EVENT_NONE;
     }
 
-    void setCommand(UserCommandID id) {
+    void setCommand(T_UserCommand_ID id) {
       ASSERT(id <= MAX_USER_COMMAND_ID, "command id");
-      command = (UserCommandEnum)id;
+      command = UserCommandEnum(id);
     }
 
-    void setParamValue(ConfigParamEnum p, int32_t value) {
+    void setParamValue(ConfigParam p, int32_t value) {
       command = CMD_CONFIG_SET_VALUE;
       param = p;
       intValue = value;
     }
 
-    void setParamValue(ConfigParamEnum p, float value) {
+    void setParamValue(ConfigParam p, float value) {
       command = CMD_CONFIG_SET_VALUE;
       param = p;
       floatValue = value;
@@ -207,13 +208,13 @@
       /*
        * Logs a problem that arose during sensor setup.
        */
-      void logSensorSetupIssue(DS18B20_Sensor *sensor, ControlMessageEnum msg);
+      void logSensorSetupIssue(DS18B20_Sensor *sensor, ControlMsg msg);
       
       /*
        * Sets a config param value and logs the change.
        * @return true if value was set and logged, false else
        */
-      boolean setConfigParamValue(ConfigParamEnum p, int32_t intValue, float floatValue);
+      boolean setConfigParamValue(ConfigParam p, int32_t intValue, float floatValue);
 
       /*
        * Swap the sensor IDs and states of water- and ambient-temperature sensor in the operational parameters.

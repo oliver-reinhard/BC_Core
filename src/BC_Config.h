@@ -9,20 +9,20 @@
    */
   typedef uint8_t T_ConfigParam_ID;
   
-  typedef enum {
-    PARAM_NONE = -1,
-    PARAM_WATER_TEMP_SENSOR_ID = 0,
-    PARAM_AMBIENT_TEMP_SENSOR_ID = 1,
-    PARAM_TARGET_TEMP = 2,
-    PARAM_HEATER_CUT_OUT_WATER_TEMP = 3,
-    PARAM_HEATER_BACK_OK_WATER_TEMP = 4,
-    PARAM_LOG_TEMP_DELTA = 5,
-    PARAM_LOG_TIME_DELTA = 6,
-    PARAM_TANK_CAPACITY = 7,
-    PARAM_HEATER_POWER = 8
-  } ConfigParamEnum;
+  enum class ConfigParam : T_ConfigParam_ID {
+    NONE = 0,
+    WATER_TEMP_SENSOR_ID = 1,
+    AMBIENT_TEMP_SENSOR_ID = 2,
+    TARGET_TEMP = 3,
+    HEATER_CUT_OUT_WATER_TEMP = 4,
+    HEATER_BACK_OK_WATER_TEMP = 5,
+    LOG_TEMP_DELTA = 6,
+    LOG_TIME_DELTA = 7,
+    TANK_CAPACITY = 8,
+    HEATER_POWER = 9
+  };
   
-  const uint8_t NUM_CONFIG_PARAMS = 9;
+  const uint8_t NUM_CONFIG_PARAMS = 9;  // don't count "NONE"
   
   #define DEFAULT_WATER_TEMP_SENSOR_ID        DS18B20_UNDEFINED_SENSOR_ID
   #define DEFAULT_AMBIENT_TEMP_SENSOR_ID      DS18B20_UNDEFINED_SENSOR_ID
@@ -34,12 +34,12 @@
   #define DEFAULT_TANK_CAPACITY               10.0 // [litre]
   #define DEFAULT_HEATER_POWER                204 // [W]
 
-  typedef enum {
-    PARAM_TYPE_UNDEFINED = -1,
-    PARAM_TYPE_TEMP_SENSOR_ID = 0,
-    PARAM_TYPE_TEMPERATURE = 1,
-    PARAM_TYPE_FLOAT = 2
-  } ConfigParamTypeEnum;
+  enum class ConfigParamType {
+    UNDEFINED = -1,
+    TEMP_SENSOR_ID = 0,
+    TEMPERATURE = 1,
+    FLOAT = 2
+  };
 
   
   #define CONFIG_PARAMS_VERSION 3
@@ -60,7 +60,7 @@
       uint8_t  reserved[32];  // for future use
 
       /* Returns the type of a given parameter. */
-      ConfigParamTypeEnum paramType(ConfigParamEnum param);
+      ConfigParamType paramType(ConfigParam param);
 
       /* Sets the sensor IDs for both temperature sensors. */
       void setDS18B20_SensorIDs(DS18B20_SensorID water, DS18B20_SensorID ambient);
